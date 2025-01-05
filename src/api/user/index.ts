@@ -3,11 +3,13 @@ import apiHandler from '~/api/api'
 import { IAccount } from '~/containers/Login/types'
 import {
   IActivityRecordsResponse,
+  IGetUserInfoResponse,
   ILocation,
   ILoginResponse,
   INewActivity,
   ISignUpResponse,
   IUploadAvatarResult,
+  IUser,
 } from './types'
 import { IErrorResponse } from '../types'
 import axios from 'axios'
@@ -129,5 +131,33 @@ export const useGetLocation = ({ latitude, longitude }: ILocation) => {
       }
     },
     enabled: !!latitude || !!longitude,
+  })
+}
+
+export const useGetUserInfo = () => {
+  return useQuery<IUser, IErrorResponse>({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const res = await apiHandler<IGetUserInfoResponse>({
+        method: 'GET',
+        url: '/user/info/self',
+      })
+
+      return res.data.user
+    },
+  })
+}
+
+export const useGetUserInfoById = (userId: string) => {
+  return useQuery<IGetUserInfoResponse, IErrorResponse>({
+    queryKey: ['userInfo', userId],
+    queryFn: async () => {
+      const res = await apiHandler({
+        method: 'GET',
+        url: `/user/info/${userId}`,
+      })
+
+      return res.data
+    },
   })
 }

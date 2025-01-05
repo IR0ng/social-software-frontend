@@ -65,3 +65,8 @@ export interface ILocation {
   latitude: number | null
   longitude: number | null
 }
+
+export interface IGetUserInfoResponse {
+  status: string
+  user: IUser
+}

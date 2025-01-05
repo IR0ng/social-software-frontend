@@ -12,9 +12,14 @@ import { E_ACTIVITY_TYPE, OS_TYPE_OBJ } from '../Activity/types'
 import { osName } from 'react-device-detect'
 import { useEffect, useState } from 'react'
 import { ILocation } from '~/api/user/types'
+import rootStore from '~/store'
+import { observer } from 'mobx-react-lite'
 
 const Login = () => {
   const router = useRouter()
+  const {
+    homeStore: { setAuth },
+  } = rootStore
   const {
     handleSubmit,
     control,
@@ -27,8 +32,8 @@ const Login = () => {
     },
   })
   const [location, setLocation] = useState<ILocation>({
-    latitude: null,
-    longitude: null,
+    latitude: 22.591589666666668,
+    longitude: 120.28498733333336,
   })
   const { isError, error, mutateAsync } = useLogin()
   const { mutate } = useNewActivity()
@@ -38,6 +43,7 @@ const Login = () => {
     const res = await mutateAsync(account)
     if (res && data) {
       localStorage.setItem('token', res.token)
+      setAuth({ token: res.token, userId: res.user.id })
       mutate({
         activityType: E_ACTIVITY_TYPE.LOGIN,
         osType: OS_TYPE_OBJ[osName],
@@ -115,4 +121,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default observer(Login)

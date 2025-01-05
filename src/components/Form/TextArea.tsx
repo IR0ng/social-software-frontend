@@ -9,12 +9,12 @@ interface ITextArea extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 const TextArea: FC<ITextArea> = ({ label, error, ...props }) => {
   return (
-    <div className="flex w-full flex-col">
+    <div className={'flex w-full flex-col'}>
       <div className="flex flex-row items-center gap-2">
         <label>{label}</label>
         {error && <ErrorAlert error={error} />}
       </div>
-      <textarea className="border border-black" {...props} />
+      <textarea className="border border-black pl-1" {...props} />
     </div>
   )
 }

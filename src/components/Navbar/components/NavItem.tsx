@@ -12,7 +12,7 @@ const NavItem: FC<AnchorHTMLAttributes<HTMLAnchorElement> & LinkProps> = ({
   return (
     <Link
       className={cn([
-        'px-10 py-2 pl-1 pr-20',
+        'px-10 py-2 pl-1 pr-20 hover:border-b hover:border-gray-400 hover:text-blue-500',
         {
           'border-b border-gray-400 text-blue-500': href === router.pathname,
         },

@@ -11,7 +11,7 @@ import { GENDER_OPTIONS } from './constant'
 import Selector from '~/components/Form/Selector'
 import { joiResolver } from '@hookform/resolvers/joi'
 import { signUpSchema } from './validations'
-import TextArea from '~/components/Form/TextArera'
+import TextArea from '~/components/Form/TextArea'
 import { useRouter } from 'next/router'
 
 const SignUp = () => {

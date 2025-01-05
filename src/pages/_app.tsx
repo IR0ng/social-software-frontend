@@ -21,7 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <div className="flex flex-1 flex-row">
         {shouldShowNavbar && <Navbar />}
-        <Component className="flex flex-1" {...pageProps} />
+        <Component {...pageProps} />
       </div>
     </QueryClientProvider>
   )
