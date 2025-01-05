@@ -32,8 +32,8 @@ const Login = () => {
     },
   })
   const [location, setLocation] = useState<ILocation>({
-    latitude: 22.591589666666668,
-    longitude: 120.28498733333336,
+    latitude: null,
+    longitude: null,
   })
   const { isError, error, mutateAsync } = useLogin()
   const { mutate } = useNewActivity()
