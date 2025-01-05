@@ -5,9 +5,13 @@ import FormButton from '~/components/Form/FormButton'
 import { joiResolver } from '@hookform/resolvers/joi'
 import { accountSchema } from './validations'
 import Form from '~/components/Form'
-import { useLogin } from '~/api/user'
+import { useGetLocation, useLogin, useNewActivity } from '~/api/user'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { E_ACTIVITY_TYPE, OS_TYPE_OBJ } from '../Activity/types'
+import { osName } from 'react-device-detect'
+import { useEffect, useState } from 'react'
+import { ILocation } from '~/api/user/types'
 
 const Login = () => {
   const router = useRouter()
@@ -22,14 +26,45 @@ const Login = () => {
       password: '',
     },
   })
+  const [location, setLocation] = useState<ILocation>({
+    latitude: null,
+    longitude: null,
+  })
   const { isError, error, mutateAsync } = useLogin()
+  const { mutate } = useNewActivity()
+  const { data } = useGetLocation(location)
+  console.log(data)
+
   const onSubmit: SubmitHandler<IAccount> = async (account) => {
     const res = await mutateAsync(account)
     if (res) {
       localStorage.setItem('token', res.token)
+      mutate({
+        activityType: E_ACTIVITY_TYPE.LOGIN,
+        osType: OS_TYPE_OBJ[osName],
+        location: '',
+      })
       router.push('/')
     }
   }
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords
+        setLocation({ latitude, longitude })
+        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`)
+      },
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+          alert('請允許地理定位，僅用於記錄您的帳號登入地點。')
+        } else {
+          console.error('Error getting geolocation:', error.message)
+        }
+      }
+    )
+  }, [])
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-10 bg-gray-100">
       <Form onSubmit={handleSubmit(onSubmit)}>
@@ -66,7 +101,9 @@ const Login = () => {
               {ERROR_MESSAGE[ERROR_RESPONSE[error.code]]}
             </p>
           )}
-          <FormButton type="submit">登入</FormButton>
+          <FormButton disabled={!location} type="submit">
+            登入
+          </FormButton>
           <p className="text-xs">或</p>
           <Link className="text-xs text-blue-500" href={'/sign-up'}>
             按此註冊

@@ -39,3 +39,29 @@ export interface NewUser {
   id: number
   createdAt: string
 }
+
+export interface INewActivity {
+  activityType: number
+  osType: number
+  location: string
+}
+
+export interface IActivityRecordsResponse {
+  status: string
+  total: number
+  records: IRecord[]
+}
+
+export interface IRecord {
+  id: number
+  userId: number
+  activityType: number
+  osType: number
+  location: string
+  createdAt: string
+}
+
+export interface ILocation {
+  latitude: number | null
+  longitude: number | null
+}

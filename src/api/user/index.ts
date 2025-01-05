@@ -1,10 +1,18 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import apiHandler from '~/api/api'
 import { IAccount } from '~/containers/Login/types'
-import { ILoginResponse, ISignUpResponse, IUploadAvatarResult } from './types'
+import {
+  IActivityRecordsResponse,
+  ILocation,
+  ILoginResponse,
+  INewActivity,
+  ISignUpResponse,
+  IUploadAvatarResult,
+} from './types'
 import { IErrorResponse } from '../types'
 import axios from 'axios'
 import { ISignUpData } from '~/containers/SignUp/types'
+
 export const useLogin = () => {
   return useMutation<ILoginResponse, IErrorResponse, IAccount>({
     mutationKey: ['login'],
@@ -12,7 +20,7 @@ export const useLogin = () => {
       try {
         const res = await apiHandler({
           method: 'POST',
-          url: '/api/user/login',
+          url: '/user/login',
           data: account,
         })
 
@@ -55,7 +63,7 @@ export const useSignUp = () => {
       try {
         const res = await apiHandler({
           method: 'POST',
-          url: '/api/user/sign-up',
+          url: '/user/sign-up',
           data,
         })
 
@@ -64,5 +72,62 @@ export const useSignUp = () => {
         throw error
       }
     },
+  })
+}
+
+export const useNewActivity = () => {
+  return useMutation<unknown, IErrorResponse, INewActivity>({
+    mutationKey: ['newActivity'],
+    mutationFn: async (data: INewActivity) => {
+      try {
+        const res = await apiHandler({
+          method: 'POST',
+          url: '/user/activity/new',
+          data,
+        })
+
+        return res.data
+      } catch (error) {
+        throw error
+      }
+    },
+  })
+}
+
+export const useGetActivityRecords = () => {
+  return useQuery<IActivityRecordsResponse, IErrorResponse>({
+    queryKey: ['activityRecords'],
+    queryFn: async (): Promise<IActivityRecordsResponse> => {
+      try {
+        const res = await apiHandler({
+          method: 'GET',
+          url: '/user/activity/records',
+        })
+
+        return res.data
+      } catch (error) {
+        throw error
+      }
+    },
+    staleTime: 0,
+  })
+}
+
+export const useGetLocation = ({ latitude, longitude }: ILocation) => {
+  return useQuery({
+    queryKey: ['location'],
+    queryFn: async () => {
+      try {
+        const res = await apiHandler({
+          method: 'GET',
+          url: `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
+        })
+
+        return res.data
+      } catch (error) {
+        throw error
+      }
+    },
+    enabled: !!latitude || !!longitude,
   })
 }
