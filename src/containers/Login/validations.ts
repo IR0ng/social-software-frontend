@@ -6,6 +6,6 @@ export const accountSchema = Joi.object({
 }).messages({
   'string.empty': '*',
   'string.email': '信箱格式錯誤',
-  'string.min': '密碼長度小於{#limit}',
-  'string.max': '密碼長度大於{#limit}',
+  'string.min': '長度小於{#limit}',
+  'string.max': '長度大於{#limit}',
 })
