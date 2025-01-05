@@ -33,16 +33,15 @@ const Login = () => {
   const { isError, error, mutateAsync } = useLogin()
   const { mutate } = useNewActivity()
   const { data } = useGetLocation(location)
-  console.log(data)
 
   const onSubmit: SubmitHandler<IAccount> = async (account) => {
     const res = await mutateAsync(account)
-    if (res) {
+    if (res && data) {
       localStorage.setItem('token', res.token)
       mutate({
         activityType: E_ACTIVITY_TYPE.LOGIN,
         osType: OS_TYPE_OBJ[osName],
-        location: '',
+        location: `${data.countryCode} / ${data.city}`,
       })
       router.push('/')
     }
@@ -53,7 +52,6 @@ const Login = () => {
       (position) => {
         const { latitude, longitude } = position.coords
         setLocation({ latitude, longitude })
-        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`)
       },
       (error) => {
         if (error.code === error.PERMISSION_DENIED) {
@@ -101,7 +99,10 @@ const Login = () => {
               {ERROR_MESSAGE[ERROR_RESPONSE[error.code]]}
             </p>
           )}
-          <FormButton disabled={!location} type="submit">
+          <FormButton
+            disabled={!location.latitude || !location.longitude}
+            type="submit"
+          >
             登入
           </FormButton>
           <p className="text-xs">或</p>
